@@ -1,0 +1,69 @@
+﻿<Window x:Class="Vlaplom.View.Dialogs.MaterialMenu.OrderMaterialDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Vlaplom.View.Dialogs.MaterialMenu"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Заказать материал"
+        MinWidth="300"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen">
+    <!--Привязка команды к событию-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="ContentRendered">
+            <i:InvokeCommandAction
+                Command="{Binding LoadDataCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="45"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Text="Выберите материал:"
+                   Margin="5"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"/>
+        <ComboBox ItemsSource="{Binding Materials}"
+                  SelectedItem="{Binding SelectedMaterial}"
+                  Margin="5"
+                  Grid.Row="1">
+            <!--Этот шаблон меняет отображаемые данные: преобразует список Executor'ов в список Executor.Name'ов-->
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Text="Укажите количество:"
+                   Margin="5"
+                   Grid.Row="2"
+                   VerticalAlignment="Center"/>
+        <toolkit:IntegerUpDown Value="{Binding Value}"
+                               Minimum="{Binding MinValue}"
+                               Maximum="{Binding MaxValue}"
+                               Increment="100"
+                               AllowTextInput="False"
+                               Margin="5"
+                               Grid.Row="3"/>
+
+        <Button Content="Заказать"
+                Grid.Row="4"
+                Width="70"
+                Height="25"
+                Command="{Binding OrderMaterialCommand}"/>
+    </Grid>
+</Window>

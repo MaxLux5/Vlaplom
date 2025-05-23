@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="Vlaplom.View.Components.MaterialMenu.MaterialMenuComponent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Vlaplom.View.Components.MaterialMenu"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:dialogs="clr-namespace:Vlaplom.View.Dialogs.MaterialMenu"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <!--Привязка команды к событию-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction
+                Command="{Binding LoadDataCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+
+    <ListView ItemsSource="{Binding Materials}">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="Номер" DisplayMemberBinding="{Binding Id}"/>
+                <GridViewColumn Header="Материал" DisplayMemberBinding="{Binding Name}"/>
+                <GridViewColumn Header="Количество на складе" DisplayMemberBinding="{Binding StockQuantity}"/>
+                <GridViewColumn Header="Ед.измерения" DisplayMemberBinding="{Binding MeasurementUnit}"/>
+            </GridView>
+        </ListView.View>
+
+
+        <!--Отключение возможности выделения элементов таблицы-->
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Focusable" Value="false"/>
+            </Style>
+        </ListView.ItemContainerStyle>
+
+
+        <!--Контекстное меню для всей ListView-->
+        <ListView.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Заказать материалы" Command="{Binding OrderMaterialCommand}"/>
+            </ContextMenu>
+        </ListView.ContextMenu>
+    </ListView>
+</UserControl>

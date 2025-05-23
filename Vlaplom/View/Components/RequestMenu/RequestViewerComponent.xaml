@@ -1,0 +1,134 @@
+﻿<UserControl x:Class="Vlaplom.View.Components.RequestMenu.RequestViewerComponent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Vlaplom.View.Components.RequestMenu"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:enums="clr-namespace:Vlaplom.ViewModel.Components.Helpers.Enums"
+             xmlns:converters="clr-namespace:Vlaplom.Converters"
+             xmlns:helpers="clr-namespace:Vlaplom.ViewModel.Components.Helpers"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <!--Привязка команды к событию-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction
+                Command="{Binding LoadDataCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+
+    <UserControl.Resources>
+        <!--Здесь реализован провайдер данных, который возвращает список элементов RequestStatus'а-->
+        <ObjectDataProvider x:Key="EnumElementsArray"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type enums:RequestStatus}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:RequestStatus"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <converters:EnumToStringConverter x:Key="EnumConverter"/>
+        <converters:TimeSpanToDurationConverter x:Key="TimeSpanConverter"/>
+
+        <!--Интервал времени, представляющий продолжительность анимации-->
+        <system:TimeSpan x:Key="AnimationTimeSpan">0:0:3</system:TimeSpan>
+        <!--Инструмент для управления анимациями-->
+        <Storyboard x:Key="Storyboard">
+            <!--Анимация поворота изображения. В данной анимации происходит поворот изображения из угла с 0° в угол с 1440°, то есть
+            делает 4 оборотов, за 3 секунды. А сами свойства отвечают за: свойство From устанавливает начальный угол поворота;
+            свойство To устанавливает конечный угол поворота; свойство Duration устанавливает время выполнения анимации-->
+            <DoubleAnimation Storyboard.TargetName="Rotate"
+                             Storyboard.TargetProperty="Angle"
+                             From="0" To="1440" Duration="{Binding Source={StaticResource AnimationTimeSpan},
+                                                                   Converter={StaticResource TimeSpanConverter}}"/>
+            <!--Устанавливает Opacity у LoadImage в значение "1" (Полное отсутствие прозрачности изображения) перед началом анимации-->
+            <DoubleAnimation Storyboard.TargetName="LoadImage"
+                             Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0"/>
+            <!--Устанавливает Opacity у LoadImage в значение "0" (Полная прозрачность изображения) через 4 секунды
+            после начала анимации. А свойство BeginTime отвечает за задержку перед началом анимации-->
+            <DoubleAnimation Storyboard.TargetName="LoadImage"
+                             Storyboard.TargetProperty="Opacity"
+                             To="0" Duration="0:0:0"
+                             BeginTime="0:0:2.95"/>
+        </Storyboard>
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="45"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Text="Исполнитель:"
+                   Margin="5"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"/>
+        <ComboBox ItemsSource="{Binding Executors}"
+                  SelectedItem="{Binding SelectedRequest.Executor, Mode=TwoWay}"
+                  Margin="5"
+                  Grid.Row="1">
+            <!--Этот шаблон меняет отображаемые данные: преобразует список Executor'ов в список Executor.Name'ов-->
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Text="Статус:"
+                   Margin="5"
+                   Grid.Row="2"
+                   VerticalAlignment="Center"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource EnumElementsArray}}"
+                  SelectedItem="{Binding SelectedRequest.Status, Mode=TwoWay}"
+                  Margin="5"
+                  Grid.Row="3">
+            <!--Этот шаблон меняет отображаемые данные: с помощью конвертора локализует список элементов RequestStatus'а-->
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <Image x:Name="LoadImage"
+               Height="35"
+               Width="35"
+               Margin="5"
+               Grid.Row="5"
+               HorizontalAlignment="Left"
+               Opacity="0"
+               Style="{StaticResource LoadingImage}">
+            <Image.RenderTransform>
+                <!--Точка вращения изображения. Выставляется в соответствии с Height и Width. А в данном случае выставлено по середине-->
+                <RotateTransform x:Name="Rotate"
+                                 CenterX="17.5"
+                                 CenterY="17.5"/>
+            </Image.RenderTransform>
+        </Image>
+
+        <Button Content="Сохранить"
+                Margin="5"
+                Grid.Row="6"
+                Command="{Binding SaveRequestCommand}"
+                CommandParameter="{StaticResource AnimationTimeSpan}">
+            <Button.Triggers>
+                <!--При срабатывании события вызывается Storyboard-->
+                <EventTrigger RoutedEvent="Button.Click">
+                    <BeginStoryboard Storyboard="{StaticResource Storyboard}"/>
+                </EventTrigger>
+            </Button.Triggers>
+        </Button>
+    </Grid>
+</UserControl>
