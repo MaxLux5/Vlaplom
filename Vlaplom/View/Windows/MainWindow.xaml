@@ -9,6 +9,6 @@
         Height="720" Width="1280"
         MinHeight="720" MinWidth="1280">
     <Grid>
-        <UserControl Content="{Binding MainScreen}"/>
+        <UserControl Content="{Binding CurrentScreen}"/>
     </Grid>
 </Window>

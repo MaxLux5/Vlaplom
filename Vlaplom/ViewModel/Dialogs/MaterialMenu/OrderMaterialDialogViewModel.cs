@@ -37,8 +37,11 @@ namespace Vlaplom.ViewModel.Dialogs.MaterialMenu
         [RelayCommand]
         private void LoadData()
         {
+            var collection = DataBase.GetInstance().GetMaterialCollection();
+            if (collection is null) return;
+
             Materials.Clear();
-            foreach (var item in DataBase.GetInstance().GetMaterialCollection())
+            foreach (var item in collection)
             {
                 Materials.Add(item);
             }

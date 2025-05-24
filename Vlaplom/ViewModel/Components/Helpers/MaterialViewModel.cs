@@ -1,16 +1,19 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Vlaplom.ViewModel.Components.Helpers
 {
     /// <summary>
     /// Базовый класс, представляющий собой модель материала.
     /// </summary>
-    public class MaterialViewModel
+    public partial class MaterialViewModel : ObservableObject
     {
         public string Id { get; private set; }
-        public string Name { get; set; }
-        public int StockQuantity { get; set; }
-        public string MeasurementUnit { get; set; }
+        [ObservableProperty]
+        private string _name;
+        [ObservableProperty]
+        private int _stockQuantity;
+        [ObservableProperty]
+        private string _measurementUnit;
 
 
         public MaterialViewModel(string id, string name, int stockQuantity, string measurementUnit)

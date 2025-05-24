@@ -7,6 +7,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Dictionaries/EnumLocalizationDictionary.xaml"/>
                 <ResourceDictionary Source="/Dictionaries/ImageDictionary.xaml"/>
+                <ResourceDictionary Source="/Dictionaries/ColorDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

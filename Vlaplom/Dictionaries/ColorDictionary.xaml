@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Определение основных цветов -->
+    <Color x:Key="White">#EAEAEA</Color>
+    <Color x:Key="Plum">#DDA0DD</Color>
+
+    <!-- Определение кистей, используемых для отрисовки градиентов -->
+    <LinearGradientBrush x:Key="DefaultBackgroundGradient">
+        <GradientStop Color="{StaticResource White}" Offset="0"/>
+        <GradientStop Color="{StaticResource Plum}" Offset="1"/>
+    </LinearGradientBrush>
+    
+</ResourceDictionary>

@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using MySqlConnector;
-using System.Net;
 using System.Windows;
 using Vlaplom.ViewModel.Components.Helpers;
 
@@ -23,11 +22,13 @@ namespace Vlaplom.DataBaseConnector
             return _instance ??= new DataBase();
         }
 
-        public IEnumerable<RequestViewModel> GetRequestCollection()
+        public IEnumerable<RequestViewModel>? GetRequestCollection()
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
-                var queryString =
+                try
+                {
+                    var queryString =
                     """
                     select requests.id as Id,
                     materials.id as MaterialId,
@@ -47,28 +48,44 @@ namespace Vlaplom.DataBaseConnector
                     ON requests.executor_id = executors.id
                     """;
 
-                return connection.Query<RequestViewModel>(queryString);
+                    return connection.Query<RequestViewModel>(queryString);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Не удалось загрузить данные.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
             }
         }
-        public IEnumerable<ExecutorViewModel> GetExecutorCollection()
+        public IEnumerable<ExecutorViewModel>? GetExecutorCollection()
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
-                var queryString =
+                try
+                {
+                    var queryString =
                     """
                     select id as Id,
                     executor_name as Name
                     from executors
                     """;
 
-                return connection.Query<ExecutorViewModel>(queryString);
+                    return connection.Query<ExecutorViewModel>(queryString);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Не удалось загрузить данные.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
             }
         }
-        public IEnumerable<MaterialViewModel> GetMaterialCollection()
+        public IEnumerable<MaterialViewModel>? GetMaterialCollection()
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
-                var queryString =
+                try
+                {
+                    var queryString =
                     """
                     select id as Id,
                     material_name as Name,
@@ -77,14 +94,20 @@ namespace Vlaplom.DataBaseConnector
                     from materials
                     """;
 
-                return connection.Query<MaterialViewModel>(queryString);
+                    return connection.Query<MaterialViewModel>(queryString);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Не удалось загрузить данные.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
             }
         }
         /// <summary>
         /// Изменяет в базе данных исполнителя и статус заданной заявки.
         /// В случае ошибки при попытке изменения данных появится сообщение об ошибке.
         /// </summary>
-        /// <param name="updatedRequest"></param>
+        /// <param name="updatedRequest">Обновленная заявка.</param>
         /// <returns>Возвращает true, если изменение данных прошло успешно, иначе возвращает false.</returns>
         public bool ChangeRequest(RequestViewModel updatedRequest)
         {
@@ -116,7 +139,7 @@ namespace Vlaplom.DataBaseConnector
         /// поля Id и Status устанавливаются самостоятельно по умолчанию, а поле Executor.Id остается пустым.
         /// В случае ошибки при попытке добавления данных появится сообщение об ошибке.
         /// </summary>
-        /// <param name="newRequest"></param>
+        /// <param name="newRequest">Новая заявка.</param>
         /// <returns>Возвращает true, если добавление данных прошло успешно, иначе возвращает false.</returns>
         public bool AddNewRequest(RequestViewModel newRequest)
         {
@@ -147,21 +170,21 @@ namespace Vlaplom.DataBaseConnector
         /// Изменяет в базе данных количество запасов заданного материала.
         /// В случае ошибки при попытке изменения данных появится сообщение об ошибке.
         /// </summary>
-        /// <param name="changedMaterial"></param>
-        /// <param name="ChangeableQuantity"></param>
+        /// <param name="changedMaterial">Изменяемый материал.</param>
+        /// <param name="changingQuantity">Число, меняющее количество StockQuantity у материала.</param>
         /// <returns>Возвращает true, если изменение данных прошло успешно, иначе возвращает false.</returns>
-        public bool ChangeMaterialStockQuantity(MaterialViewModel changedMaterial, int ChangeableQuantity)
+        public bool ChangeMaterialStockQuantity(MaterialViewModel changedMaterial, int changingQuantity)
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
-                    if (changedMaterial.StockQuantity + ChangeableQuantity < 0) return false;
+                    if (changedMaterial.StockQuantity + changingQuantity < 0) return false;
 
                     var queryString =
                     $"""
                     update materials
-                    set materials.stock_quantity = '{changedMaterial.StockQuantity + ChangeableQuantity}'
+                    set materials.stock_quantity = '{changedMaterial.StockQuantity + changingQuantity}'
                     where materials.id = '{changedMaterial.Id}'
                     """;
 
@@ -174,6 +197,41 @@ namespace Vlaplom.DataBaseConnector
                 }
 
                 return true;
+            }
+        }
+        /// <summary>
+        /// Проверяет есть ли пользователь в базе данных.
+        /// </summary>
+        /// <param name="login">Логин пользователя.</param>
+        /// <param name="password">Пароль пользователя.</param>
+        /// <returns>Возвращает true, если пользователь есть в базе данных, иначе возвращает false.</returns>
+        public bool Login(string login, string password)
+        {
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    var queryString =
+                    $"""
+                    select count(*) from auths
+                    where auths.login = '{login}'
+                    and auths.password = '{password}'
+                    """;
+
+                    var result = connection.ExecuteScalar<int>(queryString);
+                    if (result > 0) return true;
+                    else return CallErrorMessage();
+                }
+                catch (Exception)
+                {
+                    return CallErrorMessage();
+                }
+            }
+
+            bool CallErrorMessage()
+            {
+                MessageBox.Show("Такого пользователя не существует.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
     }

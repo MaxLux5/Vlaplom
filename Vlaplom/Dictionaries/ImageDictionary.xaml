@@ -7,4 +7,12 @@
             <Setter Property="Source" Value="/Resources/Images/LoadingImage.png"/>
         </Style.Setters>
     </Style>
+    <Style x:Key="EngineLogo"
+           TargetType="{x:Type Image}">
+        <Style.Setters>
+            <Setter Property="Source" Value="/Resources/Images/EngineLogo.png"/>
+            <Setter Property="Height" Value="150"/>
+            <Setter Property="Width"  Value="150"/>
+        </Style.Setters>
+    </Style>
 </ResourceDictionary>

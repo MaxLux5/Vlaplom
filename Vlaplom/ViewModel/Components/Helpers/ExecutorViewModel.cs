@@ -1,14 +1,15 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Vlaplom.ViewModel.Components.Helpers
 {
     /// <summary>
     /// Базовый класс, представляющий собой модель исполнителя.
     /// </summary>
-    public class ExecutorViewModel
+    public partial class ExecutorViewModel : ObservableObject
     {
         public int Id { get; private set; }
-        public string Name { get; set; }
+        [ObservableProperty]
+        private string _name;
 
         public ExecutorViewModel(int id, string name)
         {

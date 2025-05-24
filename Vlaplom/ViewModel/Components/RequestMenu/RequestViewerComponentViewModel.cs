@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Windows;
 using Vlaplom.DataBaseConnector;
 using Vlaplom.EventArguments;
 using Vlaplom.ViewModel.Components.Helpers;
@@ -24,8 +25,11 @@ namespace Vlaplom.ViewModel.Components.RequestMenu
         [RelayCommand]
         private void LoadData()
         {
+            var collection = DataBase.GetInstance().GetExecutorCollection();
+            if (collection is null) return;
+
             Executors.Clear();
-            foreach (var item in DataBase.GetInstance().GetExecutorCollection())
+            foreach (var item in collection)
             {
                 Executors.Add(item);
             }
@@ -33,27 +37,56 @@ namespace Vlaplom.ViewModel.Components.RequestMenu
         [RelayCommand]
         private void SaveRequest(TimeSpan timeSpan)
         {
-            OnSave(timeSpan);
+            if(SelectedRequest is null)
+            {
+                MessageBox.Show("Выберите заявку.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            // Если Executor.Id <= 0 или null, то испольнитель не назначен.
+            if (SelectedRequest.Executor is null || SelectedRequest.Executor.Id <= 0)
+            {
+                MessageBox.Show("Исполнитель не выбран. Нельзя начать выполнять заявку.", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (SelectedRequest.Status != RequestStatus.InProgress)
+                MessageBox.Show($"Если заявке не назначить статус \"В процессе\", то она не будет выполняться.", "Предупреждение!", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
+            if (SelectedRequest.Status == RequestStatus.InProgress) CompleteRequest(timeSpan);
+            else
+            {
+                DataBase.GetInstance().ChangeRequest(SelectedRequest);
+
+                ChangeSaved?.Invoke(this, new RequestEventArgs(SelectedRequest));
+            }
         }
-        private async void OnSave(TimeSpan timeSpan)
+        private async void CompleteRequest(TimeSpan timeSpan)
         {
             // Для корректной работы метода необходима временная копия SelectedRequest, чтобы, при изменении
             // этого свойства пользователем, использовалось изначальное значение.
             var tempSelectedRequest = new RequestViewModel(SelectedRequest, SelectedRequest.Executor);
 
+            // Сразу устанаваливаются новые исполнитель и статус у заявки.
             if (!DataBase.GetInstance().ChangeRequest(tempSelectedRequest)) return;
-            
+            ChangeSaved?.Invoke(this, new RequestEventArgs(tempSelectedRequest));
+
             await Task.Delay(timeSpan);
 
-            if (!DataBase.GetInstance().ChangeMaterialStockQuantity(SelectedRequest.Material, SelectedRequest.RequiredQuantity))
+            // При выполнение заявки, количество материала со склада должно вычитаться,
+            // поэтому SelectedRequest.RequiredQuantity должен быть отрицательным.
+            if (!DataBase.GetInstance().ChangeMaterialStockQuantity(SelectedRequest.Material, -SelectedRequest.RequiredQuantity))
             {
+                // Устанавливается статус заявки "Блокирована".
                 tempSelectedRequest.Status = RequestStatus.Blocked;
-                DataBase.GetInstance().ChangeRequest(tempSelectedRequest);
+                if (!DataBase.GetInstance().ChangeRequest(tempSelectedRequest)) return;
+                ChangeSaved?.Invoke(this, new RequestEventArgs(tempSelectedRequest));
 
                 return;
             }
 
+            // Устанавливается статус заявки "Выполнена".
             tempSelectedRequest.Status = RequestStatus.Done;
+            if (!DataBase.GetInstance().ChangeRequest(tempSelectedRequest)) return;
             ChangeSaved?.Invoke(this, new RequestEventArgs(tempSelectedRequest));
         }
 

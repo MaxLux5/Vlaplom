@@ -1,19 +1,26 @@
-﻿using Vlaplom.ViewModel.Components.Helpers.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Vlaplom.ViewModel.Components.Helpers.Enums;
 
 namespace Vlaplom.ViewModel.Components.Helpers
 {
     /// <summary>
     /// Базовый класс, представляющий собой модель заявки.
     /// </summary>
-    public partial class RequestViewModel
+    public partial class RequestViewModel : ObservableObject
     {
         public int Id { get; private set; }
-        public MaterialViewModel Material { get; set; }
-        public int RequiredQuantity { get; set; }
-        public string WorkType { get; set; }
-        public string TimeToComplete { get; set; }
-        public ExecutorViewModel Executor { get; set; }
-        public RequestStatus Status { get; set; }
+        [ObservableProperty]
+        private MaterialViewModel _material;
+        [ObservableProperty]
+        private int _requiredQuantity;
+        [ObservableProperty]
+        private string _workType;
+        [ObservableProperty]
+        private string _timeToComplete;
+        [ObservableProperty]
+        private ExecutorViewModel _executor;
+        [ObservableProperty]
+        private RequestStatus _status;
 
 
         public RequestViewModel(int id, string materialId, string materialName, int materialStockQuantity,

@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\EngineLogo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
@@ -17,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Images\EngineLogo.png" />
     <Resource Include="Resources\Images\LoadingImage.png" />
   </ItemGroup>
 

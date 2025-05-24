@@ -1,4 +1,5 @@
-﻿using Vlaplom.DataBaseConnector;
+﻿using System.Windows.Media.Media3D;
+using Vlaplom.DataBaseConnector;
 using Vlaplom.ViewModel.Components.Helpers;
 using Vlaplom.ViewModel.Components.Helpers.Enums;
 
@@ -10,7 +11,7 @@ namespace Vlaplom.ViewModel.Components.RequestMenu.Helpers
     public class RandomRequestGenerator
     {
         private static RandomRequestGenerator _instance;
-        private List<MaterialViewModel> materials = new List<MaterialViewModel>(DataBase.GetInstance().GetMaterialCollection());
+        private List<MaterialViewModel> materials;
         // Поле WorkTypes сделано словарем и сразу инициализировано для, возможно, последующей доработки, где это поле
         // в дальнейшем могло бы получать из базы данных динамический список <Dictionary<int, string>.
         private Dictionary<int, string> WorkTypes = new Dictionary<int, string>()
@@ -23,7 +24,19 @@ namespace Vlaplom.ViewModel.Components.RequestMenu.Helpers
         };
 
 
-        private RandomRequestGenerator() { }
+        private RandomRequestGenerator()
+        {
+            LoadList();
+        }
+
+
+        private void LoadList()
+        {
+            var collection = DataBase.GetInstance().GetMaterialCollection();
+            if (collection is null) return;
+
+            materials = new List<MaterialViewModel>(DataBase.GetInstance().GetMaterialCollection());
+        }
 
 
         public static RandomRequestGenerator GetInstance()
