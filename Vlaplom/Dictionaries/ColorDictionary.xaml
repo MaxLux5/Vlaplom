@@ -3,12 +3,12 @@
 
     <!-- Определение основных цветов -->
     <Color x:Key="White">#EAEAEA</Color>
-    <Color x:Key="Plum">#DDA0DD</Color>
+    <Color x:Key="Blue">#83B3F3</Color>
 
     <!-- Определение кистей, используемых для отрисовки градиентов -->
     <LinearGradientBrush x:Key="DefaultBackgroundGradient">
         <GradientStop Color="{StaticResource White}" Offset="0"/>
-        <GradientStop Color="{StaticResource Plum}" Offset="1"/>
+        <GradientStop Color="{StaticResource Blue}" Offset="1"/>
     </LinearGradientBrush>
     
 </ResourceDictionary>
