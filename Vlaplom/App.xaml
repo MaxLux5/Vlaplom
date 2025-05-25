@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Dictionaries/ColorDictionary.xaml"/>
+                <ResourceDictionary Source="/Resources/Dictionaries/EnumLocalizationDictionary.xaml"/>
                 <ResourceDictionary Source="/Resources/Dictionaries/ImageDictionary.xaml"/>
                 <ResourceDictionary Source="/Resources/Dictionaries/ColorDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>

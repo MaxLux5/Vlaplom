@@ -17,6 +17,5 @@ public partial class App : Application
         MainWindow mainWindow = new MainWindow();
         mainWindow.DataContext = new MainWindowViewModel(DialogService.GetInstance());
         mainWindow.Show();
-        
     }
 }
