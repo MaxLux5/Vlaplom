@@ -22,6 +22,7 @@
         <TabItem Header="Материалы"
                  Width="100">
 
+            <!--Меню управления материалами-->
             <material:MaterialMenuComponent DataContext="{Binding MaterialMenuViewModel}"/>
         </TabItem>
     </TabControl>
