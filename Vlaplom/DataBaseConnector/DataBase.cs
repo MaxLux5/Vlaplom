@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MySqlConnector;
 using System.Windows;
+using System.Windows.Media.Media3D;
 using Vlaplom.ViewModel.Components.Helpers;
 
 namespace Vlaplom.DataBaseConnector
@@ -103,6 +104,7 @@ namespace Vlaplom.DataBaseConnector
                 }
             }
         }
+
         /// <summary>
         /// Изменяет в базе данных исполнителя и статус заданной заявки.
         /// В случае ошибки при попытке изменения данных появится сообщение об ошибке.
@@ -127,7 +129,7 @@ namespace Vlaplom.DataBaseConnector
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Не удалось обновить заявку.", "Ошибка сохранения!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Не удалось обновить заявку.", "Ошибка изменения!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
 
@@ -170,22 +172,22 @@ namespace Vlaplom.DataBaseConnector
         /// Изменяет в базе данных количество запасов заданного материала.
         /// В случае ошибки при попытке изменения данных появится сообщение об ошибке.
         /// </summary>
-        /// <param name="changedMaterial">Изменяемый материал.</param>
+        /// <param name="changeableMaterial">Изменяемый материал.</param>
         /// <param name="changingQuantity">Число, меняющее количество StockQuantity у материала.</param>
         /// <returns>Возвращает true, если изменение данных прошло успешно, иначе возвращает false.</returns>
-        public bool ChangeMaterialStockQuantity(MaterialViewModel changedMaterial, int changingQuantity)
+        public bool ChangeMaterialStockQuantity(MaterialViewModel changeableMaterial, int changingQuantity)
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
-                    if (changedMaterial.StockQuantity + changingQuantity < 0) return false;
+                    if (changeableMaterial.StockQuantity + changingQuantity < 0) return false;
 
                     var queryString =
                     $"""
                     update materials
-                    set materials.stock_quantity = '{changedMaterial.StockQuantity + changingQuantity}'
-                    where materials.id = '{changedMaterial.Id}'
+                    set materials.stock_quantity = '{changeableMaterial.StockQuantity + changingQuantity}'
+                    where materials.id = '{changeableMaterial.Id}'
                     """;
 
                     connection.Execute(queryString);

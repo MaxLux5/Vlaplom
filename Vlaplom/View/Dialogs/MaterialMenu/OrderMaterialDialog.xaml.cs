@@ -4,7 +4,7 @@ using Vlaplom.Services.Abstractions;
 namespace Vlaplom.View.Dialogs.MaterialMenu
 {
     /// <summary>
-    /// Диалоговое окно для заказа материала.
+    /// ViewModel диалогового окна, которое используется для заказа материала.
     /// </summary>
     public partial class OrderMaterialDialog : Window, IDialog
     {

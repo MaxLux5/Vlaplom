@@ -9,7 +9,7 @@ using Vlaplom.ViewModel.Components.Helpers;
 namespace Vlaplom.ViewModel.Dialogs.MaterialMenu
 {
     /// <summary>
-    /// ViewModel компонента меню материалов.
+    /// ViewModel диалогового окна.
     /// </summary>
     public partial class OrderMaterialDialogViewModel : ObservableObject
     {
@@ -61,10 +61,6 @@ namespace Vlaplom.ViewModel.Dialogs.MaterialMenu
             }
 
 
-            // Временная копия нужна вместо SelectedMaterial для того, чтобы при неудачном
-            // обновлении базы данных не осталось прошлой ошибочной замены SelectedMaterial.
-            //var copy = new MaterialViewModel(SelectedMaterial.Id, SelectedMaterial.Name,
-            //    SelectedMaterial.StockQuantity + Value, SelectedMaterial.MeasurementUnit);
             if (!DataBase.GetInstance().ChangeMaterialStockQuantity(SelectedMaterial, Value)) return;
 
             _dialog.CloseDialog();

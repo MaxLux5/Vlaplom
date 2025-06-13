@@ -1,5 +1,4 @@
-﻿using System.Windows.Media.Media3D;
-using Vlaplom.DataBaseConnector;
+﻿using Vlaplom.DataBaseConnector;
 using Vlaplom.ViewModel.Components.Helpers;
 using Vlaplom.ViewModel.Components.Helpers.Enums;
 
@@ -35,7 +34,7 @@ namespace Vlaplom.ViewModel.Components.RequestMenu.Helpers
             var collection = DataBase.GetInstance().GetMaterialCollection();
             if (collection is null) return;
 
-            materials = new List<MaterialViewModel>(DataBase.GetInstance().GetMaterialCollection());
+            materials = new List<MaterialViewModel>(collection);
         }
 
 
